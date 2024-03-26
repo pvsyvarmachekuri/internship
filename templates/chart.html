@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS LINK -->
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}"> -->
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Data Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            max-width: 700px;
+            height: 500px;
+            margin: 10px;
+        }
+ 
+*{
+    font-family: 'Poppins',sans-serif;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: .2s ease;
+    outline: none;
+}
+
+html{
+    font-size: 62.5%;
+    overflow-x: hidden;
+    
+    scroll-behavior: smooth;
+}
+
+body{
+    background-color: var(--main-color);
+
+}
+
+section{
+    padding: 3.5rem 7%;
+    scroll-margin-top: 9rem;
+}
+
+img{
+    width: 100%;
+    object-fit: contain;
+}
+
+a{
+    text-decoration: none;
+    color: var(--black-color);
+}
+
+.btn{
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 2rem 3.75rem;
+    border-radius: 30px;
+    font-size: 1.7rem;
+    color: #fff;
+    background-color: var(--black-color);
+    cursor: pointer;
+}
+
+.btn:hover{
+    opacity: 0.8;
+}
+
+.heading{
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 4rem;
+    margin-bottom: 3.5rem;
+    border-bottom: 0.1rem solid #fff;
+}
+
+.heading span{
+    text-transform: uppercase;
+    color: var(--black-color);
+}
+
+.box-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 1.5rem;
+}
+
+.box{
+    padding: 3rem;
+    background-color: #fff;
+    border-radius: 3rem 2rem;
+    min-height: 60rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    border: var(--border);
+}
+
+.search-input{
+    font-size: 1.6rem;
+    color: var(--black-color);
+    padding: 1rem;
+    text-transform: none;
+    border-radius: 3rem;
+}
+
+::-webkit-scrollbar{
+    height: 0.5rem;
+    width: 1rem;
+    background-color: #0b6278;
+}
+
+::-webkit-scrollbar-track{
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius: 3rem;
+    background-color: greenyellow;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color: rgb(211, 255, 144);
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 0 7%;
+    margin: 2rem 7%;
+    border-radius: 30rem;
+    box-shadow: 0px 0px 17px -2px rgba(0,0,0,0.75);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header .search-form{
+    position: absolute;
+    top: 115%;
+    right: 7%;
+    background-color: #fff;
+    width: 50rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    border-radius: 3rem;
+    box-shadow: 0px 0px 25px 2px rgb(0 0 0 / 75%);
+    transform: scaleY(0);
+}
+
+.header .search-form.active{
+    transform: scaleY(1);
+}
+
+.header .search-form i{
+    cursor: pointer;
+    font-size: 2.2rem;
+    margin-right: 1.5rem;
+    color: var(--black-color);
+}
+.header .search-form input{
+    width: 100%;
+}
+
+.header .logo img{
+    height: 9rem;
+}
+
+.header .navbar a{
+    margin: 0 1rem;
+    font-size: 1.6rem;
+    color: var(--black-color);
+    border-bottom: 0.2rem solid transparent;
+}
+
+.header .navbar a.active,
+.header .navbar a:hover{
+    border-color: var(--main-color);
+    padding-bottom:.5rem ;
+}
+
+.header .buttons button{
+    cursor: pointer;
+    font-size: 2.5rem;
+    margin-left: 2rem;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.header .cart-items-container{
+    position: absolute;
+    top: 95%;
+    height: calc(100vh - 9rem);
+    width: 35rem;
+    background-color: #fff;
+    box-shadow: 0px 20px 14px 0px rgba(0 0 0 / 75%);
+    right: -100%;
+}
+
+.header .cart-items-container.active{
+    right: 3rem;
+}
+
+.header .cart-items-container .cart-item{
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.header .cart-items-container .cart-item:hover{
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+}
+.header .cart-items-container .cart-item img{
+    height: 7rem;
+    width: auto;
+}
+.header .cart-items-container .cart-item .content h3{
+    font-size: 2rem;
+    color: var(--black-color);
+    padding: 0.5rem;
+}
+
+.header .cart-items-container .cart-item .content .price{
+    font-size: 1.5rem;
+    color: var(--black-color);
+}
+.header .cart-items-container .cart-item .fa-times{
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--black-color);
+}
+.header .cart-items-container .btn{
+    width: 100%;
+    text-align: center;
+    border-radius: unset;
+}
+
+.header #menu-btn{
+    display: none;
+}
+
+.footer {
+    background-color: var(--black-color);
+    text-align: center;
+}
+
+.footer .search{
+    display: flex;
+    justify-content: center;
+}
+
+.footer .search .search-input{
+    width: 30rem;
+}
+
+.footer .search .btn-primary{
+    background-color: var(--main-color);
+    padding: 1rem 2rem;
+    margin-left: 1rem;
+}
+
+.footer .share{
+    padding: 2rem 0;
+}
+
+.footer .share a{
+    color: #fff;
+    font-size: 2rem;
+    width: 5rem;
+    height: 5rem;
+    line-height: 5rem;
+    border: var(--border);
+    border-radius: 50%;
+    margin: 0.3rem;
+}
+
+
+.footer .share a:hover{
+    background-color: var(--main-color);
+}
+
+.footer .links{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer .links a{
+    background-color: var(--main-color);
+     padding: 0.7rem 2rem;
+     color: #fff;
+     border: var(--border);
+}
+
+.footer .links a:hover{
+    background-color: var(--black-color);
+    opacity: 0.7;
+    
+}
+
+.footer .credit{
+    font-size: 2rem;
+    color: #fff;
+    font-weight: 300;
+    padding-top: 1.5rem;
+}
+
+.footer .credit span{
+    color: var(--main-color);
+}
+
+        @media (min-width: 768px) {
+            .chart-wrapper {
+                width: calc(50% - 20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Data Visualization</h2>
+    <header class="header" >
+        <a href="#" class="logo">
+            <img src="data:image/png;base64,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" alt="logo">
+        </a>
+        <nav class="navbar">
+            <a href="/">Home</a>
+            <a href="/about">About us</a>
+            <a href="/blog">Services</a>
+            <a href="/contact">Contact</a>
+        </nav>
+        <div class="buttons">
+            <button id="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+           
+            <button id="menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div class="search-form">
+            <input type="text" class="search-input" id="search-box" placeholder="Search">
+            <i class="fas fa-search"></i>
+        </div>
+    </header>
+
+    <div class="chart-container">
+        <div class="chart-wrapper">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="bubbleChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+
+    <section class="footer">
+        <div class="search">
+            <input type="text" class="search-input" placeholder="Search">
+            <button class="btn btn-primary">search</button>
+        </div>
+        <div class="share">
+            <a href="#" class="fab fa-facebook"></a>
+            <a href="#" class="fab fa-twitter"></a>
+            <a href="#" class="fab fa-instagram"></a>
+            <a href="#" class="fab fa-linkedin"></a>
+            <a href="#" class="fab fa-pinterest"></a>
+        </div>
+        <div class="links">
+            <a href="./index.html" >home</a>
+            <a href="./menu.html">Services</a>
+            <a href="./products.html">Attractions</a>
+            <a href="./about.html">About</a>
+            <a href="./contact.html">Contact</a>
+            <a href="./blog.html">Privacy Policy </a>
+            <a href="./blog1.html">Terms And Conditions</a>
+            <a href="./review.html">Customer Reviews</a>
+            <a href="./login 2.html">Login</a>
+        </div>
+    </section>
+
+    <script>
+        var ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: [{% for x in bar_labels %}"{{ x }}",{% endfor %}],
+                datasets: [{
+                    label: "{{ bar_y }}",
+                    data: [{% for d in bar_val %}{{ d }},{% endfor %}],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "{{ bar_y }}"
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "{{ bar_x }}"
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxPie = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: [{% for x in bar_labels %}"{{ x }}",{% endfor %}],
+                datasets: [{
+                    label: "{{ bar_y }}",
+                    data: [{% for d in bar_val %}{{ d }},{% endfor %}],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "{{ bar_y }}"
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "{{ bar_x }}"
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxLine = document.getElementById('lineChart').getContext('2d');
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: [{% for x in line_labels %}"{{ x }}",{% endfor %}],
+                datasets: [{
+                    label: "{{ line_y }}",
+                    data: [{% for d in line_val %}{{ d }},{% endfor %}],
+                    borderWidth: 1,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "{{ line_y }}"
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text:"{{ line_x }}"
+                        }
+                    }
+                }
+            }
+        });
+
+
+        var ctxBubble = document.getElementById('bubbleChart').getContext('2d');
+        new Chart(ctxBubble, {
+            type: 'polarArea',
+            data: {
+                labels: [{% for x in bar_labels %}"{{ x }}",{% endfor %}],
+                datasets: [{
+                    label: "{{ bar_y }}",
+                    data: [{% for d in bar_val %}{{ d }},{% endfor %}],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "{{ bar_y }}"
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "{{ bar_x }}"
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
